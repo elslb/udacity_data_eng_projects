@@ -12,10 +12,10 @@ songplay_table_create = ("""
 CREATE TABLE IF NOT EXISTS songplays (
         songplay_id SERIAL PRIMARY KEY,
         start_time TIMESTAMP NOT NULL,
-        user_id VARCHAR NOT NULL,
+        user_id INT NOT NULL,
         level VARCHAR NOT NULL,
-        song_id VARCHAR NOT NULL,
-        artist_id VARCHAR NOT NULL,
+        song_id VARCHAR,
+        artist_id VARCHAR,
         session_id INT NOT NULL,
         location VARCHAR,
         user_agent VARCHAR
@@ -24,7 +24,7 @@ CREATE TABLE IF NOT EXISTS songplays (
 
 user_table_create = ("""
 CREATE TABLE IF NOT EXISTS users (
-        user_id VARCHAR(50) PRIMARY KEY,
+        user_id INT PRIMARY KEY,
         first_name VARCHAR NOT NULL,
         last_name VARCHAR NOT NULL,
         gender VARCHAR NOT NULL,
@@ -103,6 +103,7 @@ song_select = ("""
 SELECT songs.song_id, songs.artist_id
 FROM songs
 JOIN artists ON songs.artist_id = artists.artist_id
+WHERE songs.title = %s AND artists.name = %s AND songs.duration = %s
 """)
 
 # QUERY LISTS
