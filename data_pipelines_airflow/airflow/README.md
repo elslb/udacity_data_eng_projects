@@ -18,7 +18,7 @@ Raw data will be extracted from S3 buckets to staging tables in Redshift, where 
 4. Run the DAG file 'udac_example_dag' to trigger the data pipeline
 
 ## Project Structure
-'''
+```
 |
 |___ dags
 |	|___ udac_example_dag.py				# DAG for the data pipeline
@@ -39,7 +39,7 @@ Raw data will be extracted from S3 buckets to staging tables in Redshift, where 
 |
 |___ README.md							# Documentation of project
 |___ create_tables.sql						# Contains SQL queries to be used for building tables
-'''
+```
 
 The layout of task dependencies for this DAG can be seen below:
 ![../airflow/images/DAGdeps.png](../airflow/images/DAGdeps.png)
