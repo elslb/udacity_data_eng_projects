@@ -42,10 +42,10 @@ Raw data will be extracted from S3 buckets to staging tables in Redshift, where 
 
 
 The layout of task dependencies for this DAG can be seen below:
-![../airflow/images/DAGdeps.png](../images/DAGdeps.png)
+![../airflow/images/DAGdeps.png](../airflow/images/DAGdeps.png)
 
 The tree view layout is also provided below:
-![../airflow/images/DAGtree.png](../images/DAGtree.png)
+![../airflow/images/DAGtree.png](../airflow/images/DAGtree.png)
 
 #### DAG Parameters:
 * No dependencies on past runs
