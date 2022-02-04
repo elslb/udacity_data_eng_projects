@@ -5,7 +5,7 @@ import pyspark
 import configparser
 import logging
 from pathlib import Path
-from pyspark.sql import SparkSession
+from pyspark.sql import SparkSession, DataFrame
 from pyspark.sql.types import DateType
 from pyspark.sql.functions import udf, col, lit, year, month, to_date, monotonically_increasing_id
 
@@ -247,18 +247,30 @@ def process_demo_data(spark, src_data, output_data):
 
 #### Data Quality Check Functions
 
-def perform_data_quality_check_1(output_data):
-    for directory in output_data.iterdit():
-        if directory.is_dir():
-            
-            # printing the schema of the generated tree to compare with expected schema
-            path = str(directory)
-            df_spark = spark.read.parquet(path)
-            print("Displaying directory tree for: " + path.split("/")[-1])
-            schema = df_spark.printSchema()
-            return schema
+def perform_data_quality_check_1(tables):
+    '''
+    Validates dim tables against data in fact tables using a source count check
+    '''
+    ft_imm = tables[0]
+    dt_imm_indiv = tables[1]
+    dt_imm_airline = tables[2]
+    dt_demo = tables[3]
+    dt_temp_us = tables[4]
     
-
+    if (ft_imm.select("cic_id").distinct().count() != dt_imm_indiv.distinct().count()):
+        raise ValueError("Error: Data from ft_imm is inconsistent with dt_imm_indiv...")
+        
+    if (ft_imm.select("visa_code").distinct().count() != dt_imm_airline.distinct().count()):
+        raise ValueError("Error: Data from ft_imm is inconsistent with dt_imm_airline...")
+        
+    if (ft_imm.select("state_code").distinct().count() != dt_demo.distinct().count()):
+        raise ValueError("Error: Data from ft_imm is inconsistent with dt_demo...")
+    
+    if (ft_imm.select("month").distinct().count() != dt_temp_us.distinct().count()):
+        raise ValueError("Error: Data from ft_imm is inconsistent with dt_temp_us...")
+        
+    logger.info("Data Quality Check 1 successfully passed!")
+    
     
 def perform_data_quality_check_2(tables):
     '''
@@ -268,6 +280,11 @@ def perform_data_quality_check_2(tables):
     for table in tables:
         if table.count() == 0
         raise ValueError(f"Something went wrong! {table} is empty!".format)
+    
+    logger.info("Data Quality Check 2 successfully passed!")
+
+        
+        
     
     
     
@@ -282,7 +299,7 @@ def main():
     SAS_label_parsing(spark, src_data, output_data)
     process_temp_data(spark, src_data, output_data)
     process_demo_data(spark, src_data, output_data)
-    perform_data_quality_check_1(output_data)
+    perform_data_quality_check_1(tables)
     perform_data_quality_check_2(tables)
     logging.info("Operations completed!")
     
